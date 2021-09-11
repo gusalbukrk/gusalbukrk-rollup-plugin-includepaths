@@ -1,6 +1,6 @@
 {
   "name": "gusalbukrk-rollup-plugin-includepaths",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "forked from dot-build/rollup-plugin-includepaths",
   "author": "gusalbukrk",
   "license": "MIT",

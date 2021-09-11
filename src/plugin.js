@@ -38,11 +38,6 @@ class RollupIncludePaths {
         // include paths
         this.projectPaths = options.paths || [''];
 
-        this.cache = {};
-        if (options.include) {
-            this.copyStaticPathsToCache(options.include);
-        }
-
         // external modules to ignore
         this.externalModules = options.external || externalModules;
 
@@ -51,6 +46,11 @@ class RollupIncludePaths {
         let extensionMatchers = this.extensions.map(e => e.replace('.', '\\.')).join('|');
 
         this.HAS_EXTENSION = RegExp('(' + extensionMatchers + ')$');
+
+        this.cache = {};
+        if (options.include) {
+            this.copyStaticPathsToCache(options.include);
+        }
     }
 
     /**
@@ -96,30 +96,32 @@ class RollupIncludePaths {
      * Used to override resolution process with static values, like the
      * `browser` config in Browserify
      *
-     * If the path has no file extension, ".js" is implied
-     *
      * @param {Object} paths
      */
     copyStaticPathsToCache (staticPaths) {
+        
+        /**
+         * If module path was passed without extension or
+         * with unknown extension (not in `this.extensions`),
+         * ".js" is implied
+         * 
+         * @param {string} file
+         * @return {string}
+         */
+        const resolveJsExtension = (file) => {
+            if (this.HAS_EXTENSION.test(file) === false) {
+                file += '.js';
+            }
+
+            return file;
+        }
+        
         let cache = this.cache;
 
         Object.keys(staticPaths).forEach(function (id) {
             var modulePath = staticPaths[id];
             cache[id] = resolveJsExtension(modulePath);
         });
-
-        /**
-         * Add '.js' to the end of file path
-         * @param {string} file
-         * @return {string}
-         */
-        function resolveJsExtension (file) {
-            if ((/\.js$/).test(file) === false) {
-                file += '.js';
-            }
-
-            return file;
-        }
     }
 
     /**
